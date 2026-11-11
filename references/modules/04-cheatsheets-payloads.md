@@ -9,7 +9,8 @@ exploitation, privilege escalation, reverse shell, SQL injection payload, XSS pa
 LFI, SSRF, Active Directory, Linux privesc, Windows privesc.
 
 **Process contract:** Always run the Universal Search Loop (Section 1) and the Process Compliance
-Gate (Section 0.5). This module supplies sources and queries only.
+Gate (Section 0.5) and the action-approval rules (Section 0.6). This module supplies
+sources and queries only; it does not authorize practical actions.
 
 ---
 
@@ -84,7 +85,8 @@ site:developer.mozilla.org "Content-Security-Policy"
 3. **Cross-check official documentation.** Cheatsheets simplify; versions and defaults differ.
 4. **Extract the minimal command/payload template** and its prerequisites.
 5. **Identify side effects and detection.** Will it crash, modify data, trigger alerts, or persist?
-6. **Test only in an authorized lab (M9).** Snapshot first; isolate the network.
+6. **Propose lab testing (M9) as a separate handoff.** If approved: snapshot first, isolate the
+   network. Without an approved run, list the template and prerequisites as unverified.
 7. **Record source + date + version.** Note any deviations you needed.
 8. **Prefer detection/defense guidance** when the goal is defensive.
 
@@ -101,7 +103,7 @@ site:developer.mozilla.org "Content-Security-Policy"
 | Side effects | event 4769, possible lockout |
 | Detection | Sigma rule, SIEM query |
 | Source | URL + commit/date |
-| Confidence | B (two sources + official docs) |
+| Evidence | corroborated by two sources plus official docs; technique not run |
 
 ---
 
@@ -129,13 +131,18 @@ site:developer.mozilla.org "Content-Security-Policy"
 
 ## Output contract
 
+Extends the shared contract in `SKILL.md` Section 13. Research output only; practical actions are a separate approved handoff (Section 0.6).
+
 ```
-module:        M4 Cheatsheets
-objective:     find validated reference for <technique/platform>
-authorization: lab / authorized engagement
-sources_used:  canonical repos + official docs + date, mapped to the claim it supports
-sources_read:  URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
-findings:      prerequisites, template, side effects, detection
-pivots:        M9 lab, M5 red team, M6 secure code
-caveats:       version drift, destructive steps removed, confidence
+module:                 M4 Cheatsheets
+objective:              find authoritative reference for <technique/platform>
+authorization:          authorized / lab / public-only / unknown
+authorization_evidence: actual scope/policy source (module default: lab / authorized engagement), or not established
+approval:               current-task A/B/C approval used (scope + limits), or none
+queries:                exact sanitized queries/dorks + engine + date (never invented)
+sources_used:           canonical repos + official docs + date, mapped to the claim it supports
+sources_read:           URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
+findings:               prerequisites, template, side effects, detection; label each claim source-reported / corroborated / code-inspected / reproduced with limits
+pivots:                 M9 lab, M5 red team, M6 secure code
+caveats:                version drift, destructive steps removed, evidence limits
 ```

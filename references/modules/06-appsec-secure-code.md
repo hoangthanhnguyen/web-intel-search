@@ -9,7 +9,8 @@ ASVS, WSTG, CWE, dependency vulnerability, secret scanning, security testing, LL
 agentic AI, prompt injection, AIBOM, SLSA, supply chain security.
 
 **Process contract:** Always run the Universal Search Loop (Section 1) and the Process Compliance
-Gate (Section 0.5). This module supplies sources and queries only.
+Gate (Section 0.5) and the action-approval rules (Section 0.6). This module supplies
+sources and queries only; it does not authorize practical actions.
 
 ---
 
@@ -132,10 +133,12 @@ site:github.com/ossf/malicious-packages "npm"
    threats (STRIDE), rate risk, choose mitigations.
 4. **Map controls to code.** For each threat, find the secure pattern and the vulnerable
    anti-pattern in the framework docs.
-5. **Configure tooling.** Semgrep/CodeQL rules, SCA, secret scanning, IaC scanning, DAST.
-6. **Review.** Combine automated findings with manual review of auth, input handling, crypto,
-   session management, file upload, deserialization, and business logic.
-7. **Verify.** Write a test that fails on the vulnerable pattern and passes on the fix.
+5. **Plan tooling.** Recommend Semgrep/CodeQL rules, SCA, secret scanning, IaC scanning, and DAST
+   configuration. Installing or running them against the repository is an approved handoff.
+6. **Review.** Combine documented automated findings from the repo with manual reading of auth,
+   input handling, crypto, session management, file upload, deserialization, and business logic.
+7. **Propose verification.** Describe the test that would fail on the vulnerable pattern and pass
+   on the fix; running it requires approval.
 8. **Report.** Include CWE, evidence, severity, remediation, and references (M12).
 
 ---
@@ -151,7 +154,7 @@ site:github.com/ossf/malicious-packages "npm"
 | Tool rule | Semgrep rule ID / CodeQL query |
 | Test | unit/integration test for cross-tenant access |
 | Severity | High (CVSS 8.1) |
-| Confidence | A (code + test + framework docs) |
+| Evidence | code-inspected (code + framework docs); no runtime test claimed |
 
 ---
 
@@ -179,13 +182,18 @@ site:github.com/ossf/malicious-packages "npm"
 
 ## Output contract
 
+Extends the shared contract in `SKILL.md` Section 13. Research output only; practical actions are a separate approved handoff (Section 0.6).
+
 ```
-module:        M6 AppSec
-objective:     assess <app/stack> against <standard>
-authorization: code owner / authorized review
-sources_used:  OWASP/ASVS/WSTG/CWE, framework docs, tool rules, mapped to the claim it supports
-sources_read:  URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
-findings:      threat model, control gaps, CWE, evidence, remediation
-pivots:        M7 architecture, M12 report, M9 labs
-caveats:       false positives, scope of review, unverified runtime behavior
+module:                 M6 AppSec
+objective:              assess <app/stack> against <standard>
+authorization:          authorized / lab / public-only / unknown
+authorization_evidence: actual scope/policy source (module default: code owner / authorized review), or not established
+approval:               current-task A/B/C approval used (scope + limits), or none
+queries:                exact sanitized queries/dorks + engine + date (never invented)
+sources_used:           OWASP/ASVS/WSTG/CWE, framework docs, tool rules, mapped to the claim it supports
+sources_read:           URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
+findings:               threat model, control gaps, CWE, evidence, remediation; label each claim source-reported / corroborated / code-inspected / reproduced with limits
+pivots:                 M7 architecture, M12 report, M9 labs
+caveats:                false positives, scope of review, unverified runtime behavior
 ```

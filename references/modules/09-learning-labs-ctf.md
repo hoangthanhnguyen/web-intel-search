@@ -8,7 +8,8 @@ Academy, VulnHub, PentesterLab, OverTheWire, Root-Me, picoCTF, CTFtime, certific
 OSWE, OSEP, eJPT, PNPT, BTL1, blue team lab, range, vulnerable app.
 
 **Process contract:** Always run the Universal Search Loop (Section 1) and the Process Compliance
-Gate (Section 0.5). This module supplies sources and queries only.
+Gate (Section 0.5) and the action-approval rules (Section 0.6). This module supplies
+sources and queries only; it does not authorize practical actions.
 
 ---
 
@@ -119,7 +120,7 @@ site:github.com "ctf-writeups"
 | Technique | DNS rebinding / redirect bypass |
 | Detection | outbound request logs |
 | Defense | allowlist, metadata blocking |
-| Confidence | A (reproduced in lab) |
+| Evidence | reproduced in lab, or source-reported if only read |
 
 ---
 
@@ -145,13 +146,18 @@ site:github.com "ctf-writeups"
 
 ## Output contract
 
+Extends the shared contract in `SKILL.md` Section 13. Research output only; practical actions are a separate approved handoff (Section 0.6).
+
 ```
-module:        M9 Labs/CTF
-objective:     close skill gap <X> at level <Y>
-authorization: lab/platform only
-sources_used:  platform, challenge, writeup URL + date, mapped to the claim it supports
-sources_read:  URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
-findings:      technique, prerequisites, detection, defense
-pivots:        M2 writeups, M4 cheatsheet, M6 secure code
-caveats:       lab realism, platform rules, confidence
+module:                 M9 Labs/CTF
+objective:              close skill gap <X> at level <Y>
+authorization:          authorized / lab / public-only / unknown
+authorization_evidence: actual scope/policy source (module default: lab/platform only), or not established
+approval:               current-task A/B/C approval used (scope + limits), or none
+queries:                exact sanitized queries/dorks + engine + date (never invented)
+sources_used:           platform, challenge, writeup URL + date, mapped to the claim it supports
+sources_read:           URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
+findings:               technique, prerequisites, detection, defense; label each claim source-reported / corroborated / code-inspected / reproduced with limits
+pivots:                 M2 writeups, M4 cheatsheet, M6 secure code
+caveats:                lab realism, platform rules, evidence limits
 ```

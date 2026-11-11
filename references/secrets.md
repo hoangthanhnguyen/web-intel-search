@@ -1,8 +1,10 @@
 # Secret Pattern Catalog
 
-Use for defensive review, authorized assessments, and leak triage. Never use a discovered secret to
-access data. Validate only with read-only identity endpoints when authorized, and redact values in
-all reports (show first/last 4 chars only).
+Use for defensive review, authorized assessments, and leak triage. Discovery and validation are
+separate steps: **detect by default, do not validate**. Never use a discovered secret to access data.
+A read-only GET can still return customer, financial, or account data, so "read-only" does not make
+it a safe identity check. Any validation requires the separate A/B/C approval and written scope in
+`SKILL.md` Section 0.6. Redact values in all reports (first/last 4 chars only).
 
 ## Provider tokens
 
@@ -90,33 +92,44 @@ Regex alone misses unknown providers. Score candidate strings:
 - Exclude hashes/IDs that match known formats (UUID, MD5, SHA1, SHA256, commit SHAs, asset hashes).
 - Deduplicate by SHA-256 of the value; aggregate by file/repo.
 
-## Validation notes (authorized, read-only only)
+## Candidate validation (separate approval; narrow checks only)
 
-| Provider | Safe identity check | Caution |
+Default: report "not validated". Consider a check only if it changes a decision and written scope
+exists. Before proposing one, name the provider/account, exact endpoint, response fields, and side
+effects, then use the A/B/C flow in `SKILL.md` Section 0.6.
+
+| Provider | Candidate check (verify current docs) | Important caution |
 |---|---|---|
-| AWS | `sts get-caller-identity` | Confirms identity only; never list/read data |
-| GitHub | `GET /user` | Check scopes in response headers |
+| AWS | `sts get-caller-identity` | Confirms caller identity; never list/read resources |
+| GitHub | `GET /user` | Check token scopes; no repository content |
 | GitLab | `GET /api/v4/user` | |
 | Slack | `auth.test` | |
-| OpenAI | `GET /v1/models` | |
-| Anthropic | `GET /v1/models` | |
+| OpenAI | `GET /v1/models` | Metadata only; do not invoke models |
+| Anthropic | `GET /v1/models` | Metadata only |
 | npm | `GET /-/whoami` | |
 | PyPI | token info endpoint | |
-| Stripe | `GET /v1/balance` or account | Avoid any charge/customer reads |
-| SendGrid | `GET /v3/user/account` | |
+| Stripe | No data-free check in this catalog | `/v1/balance` returns account balance; `/v1/charges` returns customer charges. Treat both as data access, not identity |
+| SendGrid | `GET /v3/user/account` | Returns account details |
 | Datadog | `GET /api/v1/validate` | |
 
 Rules:
-- Only on authorized engagements, with written scope.
+- Only with written scope **and** the specific action approval; never reuse a grant beyond its limits.
 - Never pivot from a key to customer data, billing actions, or destructive operations.
-- Prefer reporting without validation if authorization is ambiguous.
-- Redact secrets; rotate immediately; notify the owner through the agreed channel.
+- If authorization or a data-free check is ambiguous, report without validation.
+- Stop on unexpected data. Redact; recommend rotation; notify the owner through the agreed channel.
+- Never place the raw secret in an agent answer, log, query, or file.
 
 ## Scanner commands
 
+Local scanning is a practical step; run it only with approval, in an isolated workspace, and do not
+upload findings. TruffleHog verifies credentials through provider APIs by default — disable that
+unless validation is separately approved. Keep `--results` so unverified detections are still shown.
+
 ```bash
 gitleaks detect --source . --report-format json --report-path gitleaks.json
-trufflehog filesystem . --json > trufflehog.json
-trufflehog git https://github.com/org/repo --results=verified,unknown
+trufflehog filesystem . --no-verification --results=verified,unverified,unknown --json
+trufflehog git file://repo --no-verification --results=verified,unverified,unknown --json
 git log -p --all | grep -Ei 'api[_-]?key|secret|password|token'
 ```
+Scan output contains live secrets in plaintext. Treat it as sensitive: restrict permissions, do not
+paste it into chat, and delete it after the approved task when the retention rule allows.

@@ -9,7 +9,8 @@ duplicate, disclosure policy, safe harbor, rules of engagement, private program,
 火线, SRC.
 
 **Process contract:** Always run the Universal Search Loop (Section 1) and the Process Compliance
-Gate (Section 0.5). This module supplies sources and queries only.
+Gate (Section 0.5) and the action-approval rules (Section 0.6). This module supplies
+sources and queries only; it does not authorize practical actions.
 
 ---
 
@@ -125,13 +126,16 @@ github.com/arkadiyt/bounty-targets-data
 - Ignoring program updates and exclusions added after the last writeup.
 - Reporting duplicates already disclosed in Hacktivity.
 - Violating safe harbor by using out-of-scope techniques.
-- Confusing a VDP (no reward, legal protection) with a paid bounty.
+- Confusing a VDP (disclosure process; rewards and legal protection depend on its actual policy)
+  with a paid bounty, or assuming either grants testing permission.
 
 ---
 
 ## Ethics
 
-- Only test assets explicitly in scope, with the program's rules as the authorization.
+- A program's published scope can support authorization, but testing is still a separate practical
+  action: record the exact policy/scope evidence and obtain the Section 0.6 approval. Do not assume
+  rewards, safe harbor, or permission from a VDP listing.
 - Respect rate limits, privacy, and data-minimization requirements.
 - Report privately through the program channel; never publish before the disclosure deadline.
 - Stop and ask the program when scope is ambiguous.
@@ -140,13 +144,18 @@ github.com/arkadiyt/bounty-targets-data
 
 ## Output contract
 
+Extends the shared contract in `SKILL.md` Section 13. Research output only; practical actions are a separate approved handoff (Section 0.6).
+
 ```
-module:        M1 Bug Bounty
-objective:     identify program + scope + rules for <target>
-authorization: program policy (public bounty/VDP)
-sources_used:  program URL, security.txt, scope data, prior reports, mapped to the claim it supports
-sources_read:  URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
-findings:      scope table, rules, rewards, SLA, exclusions, confidence
-pivots:        M2 writeups, M3 CVEs, M4 cheatsheets, M9 labs
-caveats:       scope changes, private assets, program status
+module:                 M1 Bug Bounty
+objective:              identify program + scope + rules for <target>
+authorization:          authorized / lab / public-only / unknown
+authorization_evidence: actual scope/policy source (module default: program policy (public bounty/VDP)), or not established
+approval:               current-task A/B/C approval used (scope + limits), or none
+queries:                exact sanitized queries/dorks + engine + date (never invented)
+sources_used:           program URL, security.txt, scope data, prior reports, mapped to the claim it supports
+sources_read:           URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
+findings:               scope table, rules, rewards, SLA, exclusions, evidence limits; label each claim source-reported / corroborated / code-inspected / reproduced with limits
+pivots:                 M2 writeups, M3 CVEs, M4 cheatsheets, M9 labs
+caveats:                scope changes, private assets, program status
 ```

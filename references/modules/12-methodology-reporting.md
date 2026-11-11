@@ -9,7 +9,8 @@ RoE, statement of work, SOW, penetration test report, risk rating, CVSS, remedia
 quality assurance, peer review.
 
 **Process contract:** Always run the Universal Search Loop (Section 1) and the Process Compliance
-Gate (Section 0.5). This module supplies sources and queries only.
+Gate (Section 0.5) and the action-approval rules (Section 0.6). This module supplies
+sources and queries only; it does not authorize practical actions.
 
 ---
 
@@ -88,14 +89,16 @@ site:nist.gov "800-115" "security testing"
    stop, legal boundaries.
 3. **Methodology selection.** PTES + OWASP WSTG + ATT&CK as appropriate; document deviations.
 4. **Test plan.** Map test cases to risks and effort; define evidence requirements.
-5. **Execution and evidence.** Log every action, timestamp, request/response, screenshot, and
-   command. Preserve chain of custody.
+5. **Execution and evidence (approved action).** The agent may help design what to log and how to
+   preserve evidence; executing the test, taking screenshots, and changing systems require the
+   Section 0.6 approval and remain the operator's responsibility.
 6. **Risk rating.** Use CVSS + business impact; calibrate with EPSS/KEV for exploitation likelihood.
 7. **Report.** Executive summary, scope, methodology, findings, evidence, impact, remediation,
-   appendices.
+   appendices. Label each finding with its evidence type and limits.
 8. **Quality review.** Peer review for accuracy, reproducibility, and consistency.
 9. **Debrief.** Walk through findings with the client; prioritize fixes.
-10. **Retest.** Verify remediation; issue a closure letter.
+10. **Retest.** Retesting is a separate approved action; report remediation as "verified" only
+    after observing the retest.
 
 ---
 
@@ -130,6 +133,8 @@ site:nist.gov "800-115" "security testing"
 ## Ethics
 
 - Written authorization and RoE are mandatory before testing.
+- Authorization is evidence of scope, not permission for the agent to act; obtain the separate
+  action approval each time the boundaries are not already granted.
 - Respect confidentiality, data minimization, and retention limits.
 - Do not test prohibited techniques or out-of-scope assets.
 - Disclose findings responsibly and coordinate publication.
@@ -139,13 +144,18 @@ site:nist.gov "800-115" "security testing"
 
 ## Output contract
 
+Extends the shared contract in `SKILL.md` Section 13. Research output only; practical actions are a separate approved handoff (Section 0.6).
+
 ```
-module:        M12 Methodology
-objective:     plan/report <engagement> using <framework>
-authorization: signed scope + RoE
-sources_used:  PTES/WSTG/NIST/CREST + templates, mapped to the claim it supports
-sources_read:  URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
-findings:      scope, methodology, findings, ratings, remediation, retest
-pivots:        M1-M11 as needed
-caveats:       scope limits, assumptions, unverified remediation
+module:                 M12 Methodology
+objective:              plan/report <engagement> using <framework>
+authorization:          authorized / lab / public-only / unknown
+authorization_evidence: actual scope/policy source (module default: signed scope + RoE), or not established
+approval:               current-task A/B/C approval used (scope + limits), or none
+queries:                exact sanitized queries/dorks + engine + date (never invented)
+sources_used:           PTES/WSTG/NIST/CREST + templates, mapped to the claim it supports
+sources_read:           URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
+findings:               scope, methodology, findings, ratings, remediation, retest; label each claim source-reported / corroborated / code-inspected / reproduced with limits
+pivots:                 M1-M11 as needed
+caveats:                scope limits, assumptions, unverified remediation
 ```

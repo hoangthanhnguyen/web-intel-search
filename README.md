@@ -10,12 +10,22 @@ defensive research, bug bounty, appsec, architecture, learning, and journalism.
 ## What it does
 
 - Routes a request to 1 primary + 0-2 secondary modules based on keywords and intent.
-- Always runs the Universal Search Loop: Frame -> Plan -> Expand -> Collect -> Verify -> Report.
-- Enforces a Process Compliance Gate before answering: scope, sources, queries, confidence,
+- Runs the Universal Search Loop proportionally: quick for narrow facts, deep for disputed or
+  consequential questions (declared, not guessed silently).
+- Enforces a Process Compliance Gate before answering: scope, sources, queries, evidence labels,
   contradictions, and redaction.
-- Ends every answer with a Source Ledger: links used for synthesis plus links read but not used,
-  each with a reason for exclusion.
+- Keeps traceability: sanitized queries, sources used, sources read but excluded, and approvals.
+- Separates research from action: credential validation, active testing, reproduction, installs,
+  and changes need the explicit A/B/C approval in `SKILL.md` Section 0.6 (once, or bounded
+  similar actions for the current task).
 - Ships 12 domain packs and 6 core reference files.
+
+## Research vs action
+
+The skill is research-first. It can plan an action but does not perform one because a lab or an
+engagement already exists. Approval options: **A** once, **B** bounded similar actions for this
+task, **C** decline. A grant is limited by stated target, operation, environment, data class and
+destination, privilege, rate/cost, impact, and expiry; any change requires a new approval.
 
 ## Modules
 
@@ -64,8 +74,8 @@ cp -r web-intel-search ~/.claude/skills/
 ### opencode
 
 ```bash
-mkdir -p ~/.config/opencode/skill
-cp -r web-intel-search ~/.config/opencode/skill/
+mkdir -p ~/.config/opencode/skills
+cp -r web-intel-search ~/.config/opencode/skills/
 ```
 
 ### Other agents
@@ -82,9 +92,9 @@ clawhub skill publish ./web-intel-search --dry-run
 clawhub skill publish ./web-intel-search \
   --slug web-intel-search \
   --name "Web Intel Search" \
-  --version 1.9.0 \
+  --version 1.9.2 \
   --tags "security,osint,search,bug-bounty,red-team,appsec,architecture" \
-  --changelog "v1.9.0: individual researcher blogs for pentest, red team, and bug bounty across global and Chinese-language sources, plus active team blogs"
+  --changelog "v1.9.2: Tor/I2P access procedure, observation-vs-ownership rule, and lawful substitutes for illegal sources"
 ```
 
 Before publishing, review the skill and its files. ClawHub runs automated security scans; keep
@@ -102,23 +112,31 @@ the content defensive and free of secrets.
 "So sánh OWASP ASVS và NIST 800-53"                    -> M6 + M7 + M12
 ```
 
-Every response should state the module used, the queries run, the sources (URL + date), the
-confidence grade, and the caveats. It must also include two source lists: links used for synthesis
-and links read but not used (with the exclusion reason).
+Every response states the module used, the research depth, the sanitized queries with engine/date,
+sources with evidence labels, caveats, and any approval used (or none). A narrow lookup gets a
+concise answer plus traceability; a deep assessment or engagement deliverable can use the full
+report template. Both include two source lists: links used for synthesis and links read but not
+used (with the exclusion reason).
 
 ## Output contract
 
 ```text
-module:          M# <name>
-objective:       one sentence
-authorization:   authorized / lab / public-only / unknown
-queries:         exact queries and dorks used
-sources_used:    URL + title + date + claim supported
-sources_read:    URL + title + date + reason read but not used
-findings:        claim + evidence + confidence (A-D)
-pivots:          next identifiers or sources to check
-caveats:         gaps, contradictions, stale/unsupported claims
+module:                 M# <name>
+objective:              one sentence
+depth:                  quick / deep (and why)
+authorization:          authorized / lab / public-only / unknown
+authorization_evidence: actual scope/policy source, or "not established"
+approval:               current-task A/B/C grant used (scope + limits), or none
+queries:                exact sanitized queries/dorks + engine + date
+sources_used:           URL + title + date + evidence label + claim supported
+sources_read:           URL + title + date + reason read but not used
+findings:               claim + evidence label + limits
+pivots:                 next identifiers or sources to check
+caveats:                gaps, contradictions, stale/unsupported claims
 ```
+
+Evidence labels: `source-reported`, `corroborated`, `code-inspected`, `reproduced`. "Reproduced"
+requires your own observed run with environment/date; a source's claim stays source-reported.
 
 If no source was read but excluded, write `None` explicitly. Discovery-only pages belong under
 `sources_read` with reason `discovery only`; do not hide them.
@@ -126,14 +144,17 @@ If no source was read but excluded, write `None` explicitly. Discovery-only page
 ## Process guarantee
 
 The skill does not allow a module to bypass the process. The router selects sources and recipes;
-the Universal Search Loop and the Process Compliance Gate remain mandatory. The gate fails if the
-Source Ledger omits either used sources or read-but-not-used sources. This keeps results
-reproducible and prevents "search and dump" answers.
+the Universal Search Loop, the Evidence labels, and the Process Compliance Gate remain mandatory.
+The gate fails if the traceability block omits either used sources or read-but-not-used sources,
+or if a practical action/queries went out without the required approval.
 
 ## Safety
 
-- Authorized testing, labs, and public-source research only.
-- No credential use, no destructive actions, no exploit execution against third parties.
+- Research and public-source work first; practical testing needs written scope and the separate
+  action approval.
+- No credential validation by default; no destructive actions; no exploit execution against third
+  parties.
+- Sanitize sensitive-derived queries and show them before sending.
 - Redact secrets and PII; respect disclosure timelines and terms of service.
 - Verify third-party skills and tools before installing them.
 

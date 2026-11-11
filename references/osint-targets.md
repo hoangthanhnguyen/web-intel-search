@@ -18,11 +18,53 @@ Use these to route to the right source; they are indexes, not evidence.
   updates.
 Cite the original source you actually used, not the hub.
 
-## Deep web, dark web, and research aggregators
+## Deep web, dark web, and Tor/I2P access
 Deep web content is gated or unindexed (databases, records, libraries); the dark web is Tor/I2P.
-Use lawful public access only. Do not buy, download, or redistribute illegal data, breach dumps, or
-PII. For Tor, use Tor Browser, keep JavaScript disabled, never log in with a real identity, and
-verify every `.onion` address against an independent official source.
+Observe and record that a leak, dump, or marketplace listing exists; do not acquire, store, buy, or
+redistribute the data itself. Owned illegal data is not evidence: it cannot be cited, reproduced,
+or defended in a report, and holding it can create legal exposure. Use the lawful substitutes below.
+
+### Tor access (when no Tor connection exists)
+Tor is lawful in many jurisdictions and is used by journalists, researchers, and defenders. Confirm
+local law, employer policy, and engagement scope before routing traffic: using Tor can breach a
+target's terms or a corporate network policy even when the research itself is lawful. Accessing
+Tor/I2P is a practical step; request the A/B/C approval in `SKILL.md` 0.6 with the risk of the
+entry/exit jurisdiction and the stop conditions.
+
+1. Install Tor Browser from `torproject.org`; verify the GPG signature or published checksum before
+   running. Do not use mirrors, repacks, or "portable" builds from unknown sites.
+2. Start it and open `https://check.torproject.org/`; confirm the "Congratulations" result and that
+   the observed IP is a Tor exit. If it cannot connect, enable built-in Bridges (obfs4 or
+   snowflake) under Settings > Connection.
+3. Set Security Level to **Safest** (JavaScript disabled) and leave it disabled. Do not enable JS
+   "just to view" a page, install extensions, or mix this profile with normal browsing.
+4. Do not log in with a real identity, reuse passwords, or open personal accounts. Use a dedicated
+   VM/profile. Assume sites fingerprint the browser and exit nodes can see unencrypted traffic.
+5. CLI/scripting only when needed and approved: run the Tor daemon, then
+   `torsocks curl -sS https://check.torproject.org/api/ip` or
+   `curl --socks5-hostname 127.0.0.1:9050 ...`. Use `--socks5-hostname`, not `--socks5`, or DNS
+   leaks to the local resolver.
+6. Find onion services through filtered indexes: Ahmia, Onion Search Engine, and the SecureDrop
+   Directory for newsrooms. Verify every `.onion` address against an independent official clearnet
+   source; do not trust addresses from social posts, paste sites, or unsolicited messages.
+7. Record evidence as sanitized URL, UTC timestamp, page title, screenshot or text hash, and a note
+   that it was Tor-only. Do not mirror illegal content into notes, tickets, or repositories.
+8. Stop and do not download when you encounter CSAM, stolen personal data, malware-for-sale, or
+   drugs/weapons marketplaces. Record only that it exists, the category, and the date; escalate
+   through the agreed channel.
+
+### Lawful substitutes for illegal or unsafe sources
+| Illegal or unsafe source | Use instead |
+|---|---|
+| Breach or credential dump | HIBP (existence and affected accounts), licensed CTI (SpyCloud, Constella), vendor notification, regulator report |
+| Infostealer logs | Hudson Rock Cavalier, licensed CTI feed, vendor incident report |
+| Dark-web marketplace listing | ransomware.live, RansomLook, vendor CTI reports, law-enforcement takedown releases |
+| Malware sample from an untrusted post | MalwareBazaar, Triage, VirusTotal metadata; analyze in an isolated VM |
+| Stolen PII | Report existence and category; never redistribute; use aggregate statistics |
+| Stolen credential | Report to the owner; never validate or log in |
+
+If local law or policy forbids Tor, do not use it and state the resulting limitation in the answer.
+
 - **Ahmia** (`ahmia.fi`) - filtered onion search engine; search from clearnet, open results in Tor.
 - **Onion Search Engine** (`onionsearchengine.com`) - filtered, script-light onion search; use the
   official `.onion` mirror linked from its clearnet page.
@@ -76,7 +118,7 @@ Cite the underlying record; aggregators are discovery aids, not evidence.
 - Neighbor discovery: same /24, same ASN, same org, shared certificates.
 
 ## Email
-- Validate syntax/MX/SMTP (carefully, no spam), catch-all detection.
+- Validate syntax/MX/SMTP only where permitted and with approval; no spam, minimal probes, catch-all detection.
 - Breach exposure: Have I Been Pwned (API or web), DeHashed, LeakCheck, BreachDirectory.
 - Infostealer exposure: **Hudson Rock Cavalier** (`cavalier.hudsonrock.com`) - infected-machine and
   stealer-log intelligence by domain/email; authorized/legal use only, never use credentials.

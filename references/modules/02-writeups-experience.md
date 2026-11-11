@@ -9,7 +9,8 @@ HackerOne Hacktivity, Bugcrowd CrowdStream, Medium, dev.to, InfoSec Write-ups, P
 "bug bounty journey", "lessons learned", "methodology".
 
 **Process contract:** Always run the Universal Search Loop (Section 1) and the Process Compliance
-Gate (Section 0.5). This module supplies sources and queries only.
+Gate (Section 0.5) and the action-approval rules (Section 0.6). This module supplies
+sources and queries only; it does not authorize practical actions.
 
 ---
 
@@ -96,8 +97,8 @@ site:github.com "pentest" "writeups" "CVE"
 5. **Separate signal from luck.** Note whether the find depended on a specific feature, misconfig,
    or business logic.
 6. **Map to your authorized target.** Check whether the preconditions exist; do not test without
-   scope.
-7. **Validate in a lab (M9)** before claiming reproducibility.
+   scope and a separate action approval (Section 0.6).
+7. **Propose lab validation (M9)** as a separate handoff; only claim "reproduced" after observing it.
 8. **Write a synthesis**, not a copy: patterns, decision tree, detection ideas, references.
 
 ---
@@ -114,7 +115,7 @@ site:github.com "pentest" "writeups" "CVE"
 | Discovery path | recon -> schema introspection -> query mutation |
 | Impact | read other tenants' invoices |
 | Fix | per-object authorization + tests |
-| Confidence | B (multiple corroborating writeups) |
+| Evidence | corroborated: multiple writeups agree; none reproduced by us |
 | Source | URL + archive link |
 
 ---
@@ -142,13 +143,18 @@ site:github.com "pentest" "writeups" "CVE"
 
 ## Output contract
 
+Extends the shared contract in `SKILL.md` Section 13. Research output only; practical actions are a separate approved handoff (Section 0.6).
+
 ```
-module:        M2 Writeups
-objective:     extract methodology for <bug class/tech>
-authorization: public sources only / program scope if testing
-sources_used:  N writeups with URL + date + author, mapped to the claim it supports
-sources_read:  URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
-findings:      patterns, preconditions, payload concepts, impact, fixes
-pivots:        M1 scope, M3 CVE, M4 cheatsheet, M9 lab
-caveats:       outdated/redacted/lucky findings; confidence level
+module:                 M2 Writeups
+objective:              extract methodology for <bug class/tech>
+authorization:          authorized / lab / public-only / unknown
+authorization_evidence: actual scope/policy source (module default: public sources only / program scope if testing), or not established
+approval:               current-task A/B/C approval used (scope + limits), or none
+queries:                exact sanitized queries/dorks + engine + date (never invented)
+sources_used:           N writeups with URL + date + author, mapped to the claim it supports
+sources_read:           URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
+findings:               patterns, preconditions, payload concepts, impact, fixes; label each claim source-reported / corroborated / code-inspected / reproduced with limits
+pivots:                 M1 scope, M3 CVE, M4 cheatsheet, M9 lab
+caveats:                outdated/redacted/lucky findings; evidence labels and limits
 ```

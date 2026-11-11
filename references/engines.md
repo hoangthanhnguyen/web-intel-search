@@ -87,38 +87,39 @@ Strong for reverse image search (`https://yandex.com/images/`), regional content
 
 ## GitHub Code Search
 
+Scope: this is the current `github.com/search` code search syntax; legacy qualifiers such as
+`filename:`/`extension:`/`in:file` are not part of it. In this syntax adjacent terms are AND; use
+explicit `OR` and parentheses to group alternatives.
+
 ```
-in:name              repo name
-in:description       repo description
-in:readme            README content
-in:topics            topics
-in:file              file content
-in:path              file path
-repo:owner/name      specific repo
-org:name             organization
-user:name            user
-language:python      language
-path:.env            path filter
-filename:.npmrc      filename
-extension:sql        extension
-size:>1000           size (KB)
-stars:>100           stars
-fork:true|false      include forks
-archived:true|false  archived
-is:public            visibility
-created:>2024-01-01  creation date
-pushed:>2025-01-01   last push
-topic:security       topic
+repo:owner/name        specific repository (full name required)
+org:name               organization
+user:name              user
+language:python        language (exact name from github-linguist)
+path:.env              path substring; globs like path:*.txt or path:/src/**/*.js
+content:"password"     content only, excludes path matches
+symbol:WithContext     symbol definitions (parsed; language support varies)
+is:archived            archived repositories
+is:fork                forked repositories
+created:>2024-01-01    creation date
+pushed:>2025-01-01     last push
+NOT is:fork            exclude forks
 ```
+Regex is written between slashes, e.g. `/sparse.*index/`. Quoted strings disable glob matching.
+Search results reflect public code only; private or deleted data is not exposed by this query.
+
 Examples:
 ```
-org:target filename:.env
-org:target "AKIA"
+org:example filename:.env
+org:example "AKIA"
 filename:.git-credentials
 path:.github/workflows "secrets."
-"BEGIN RSA PRIVATE KEY" org:target
-extension:sql "INSERT INTO" org:target
+"BEGIN RSA PRIVATE KEY" org:example
+extension:sql "INSERT INTO" org:example
 ```
+`filename:`/`extension:` above are legacy-style examples; translate to `path:` (for example
+`path:.env`) or a regex in the current code search. Treat any hit as source-reported, and never use
+a discovered credential.
 
 ## Shodan
 

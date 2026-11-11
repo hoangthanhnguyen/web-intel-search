@@ -1,7 +1,10 @@
 # Tooling & Automation
 
-Install only what you need. Pin versions, verify sources, and prefer package managers over
-`curl | bash`. Use API keys from environment variables or a secret manager.
+Research first. These commands are references for an approved practical step, not instructions to
+run them. Install only what is needed, pin versions, verify sources, and prefer package managers
+over `curl | bash`. Use API keys from environment variables or a secret manager. Active scanning,
+credential validation, downloads/uploads, and any change to a system require the separate approval
+in `SKILL.md` Section 0.6; existing engagement authorization alone is not enough.
 
 ## 1. Web fetch and crawl
 
@@ -16,10 +19,12 @@ w3m -dump page.html
 pandoc -f html -t plain page.html
 python3 -c "import bs4,sys;print(bs4.BeautifulSoup(open(sys.argv[1]).read(),'html.parser').get_text())" page.html
 
-# Playwright (JS-rendered pages)
-python3 -m pip install playwright && playwright install chromium
+# Playwright (JS-rendered pages); installing it is a practical action needing approval.
 # Firecrawl / Crawl4AI are agent-friendly crawlers with extraction APIs.
 ```
+Do not send internal pages, authenticated URLs, or sensitive-derived queries to third-party
+extraction/crawl services without sanitizing and approval (Section 0.6). Never submit a URL that
+embeds credentials or tokens.
 
 ## 2. General search APIs
 
@@ -49,8 +54,11 @@ curl -s https://api.perplexity.ai/chat/completions -H "Authorization: Bearer $PP
 
 ## 3. Cyberspace search
 
+Searching an index (Shodan/Censys/FOFA) is passive; querying a specific target, downloading
+results, or pivoting to live hosts can become active. Confirm authorization and scope first.
+
 ```bash
-pip install shodan censys
+pip install shodan censys   # installation is a practical step
 shodan init "$SHODAN_API_KEY"
 shodan search --fields ip_str,port,org,product 'org:"Example Inc"'
 shodan host 203.0.113.10
@@ -65,47 +73,44 @@ censys view 203.0.113.10
 
 ## 4. Subdomain and asset discovery
 
-```bash
-go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
-go install -v github.com/projectdiscovery/dnsx/cmd/dnsx@latest
-go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
-go install -v github.com/projectdiscovery/naabu/v2/cmd/naabu@latest
-go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
-go install -v github.com/projectdiscovery/katana/cmd/katana@latest
-go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
+Discovery is active against the target's DNS/infrastructure. Use passive sources first
+(CT logs, passive DNS, archives); brute force and port scanning need written scope plus the
+Section 0.6 approval.
 
+```bash
+# Passive first
+amass enum -passive -d example.com -o amass.txt
+gau example.com | tee urls.txt
+waybackurls example.com | tee wayback.txt
+curl -s 'https://crt.sh/?q=%25.example.com&output=json' | jq -r '.[].name_value' | sort -u
+
+# Active enumeration/scanning: authorization + separate approval required
 subfinder -d example.com -all -silent | dnsx -silent -a -resp
 subfinder -d example.com -silent | httpx -silent -title -tech-detect -status-code
 naabu -host example.com -top-ports 1000 -silent
 nuclei -l urls.txt -severity critical,high -o nuclei.txt
 
-# Amass (OWASP)
-amass enum -passive -d example.com -o amass.txt
-
 # bbot (all-in-one, respects scope/rate limits)
-pipx install bbot
 bbot -t example.com -f subdomain-enum web-basic -o ./bbot-out
-
-# Historical URLs
-go install github.com/lc/gau/v2/cmd/gau@latest
-go install github.com/tomnomnom/waybackurls@latest
-gau example.com | tee urls.txt
-waybackurls example.com | tee wayback.txt
 ```
 
 ## 5. GitHub and code
 
 ```bash
-gh auth login
 gh search code 'org:example "AKIA"'
 gh search repos 'topic:osint --sort stars'
 gh api 'search/code?q=filename:.env+org:example'
 
-# Clone and scan (authorized only)
+# Local clone/scan is a practical step: approved, isolated, no credential use.
 gitleaks detect --source repo --report-format json --report-path leaks.json
-trufflehog git https://github.com/org/repo --results=verified,unknown
+# TruffleHog verifies credentials by calling provider APIs by default. Use no-verification
+# unless validation is separately approved. --results is still required because unverified
+# results are otherwise filtered out.
+trufflehog git file://repo --no-verification --results=verified,unverified,unknown --json
 git log -p --all | grep -Ei 'api[_-]?key|secret|password|token'
 ```
+Do not use a discovered credential. A "read-only" provider endpoint can still return customer or
+financial data; see `secrets.md` validation notes.
 
 ## 6. DNS, certificates, archives
 
@@ -122,6 +127,10 @@ curl -s 'https://index.commoncrawl.org/CC-MAIN-2025-30-index?url=example.com/*&o
 
 ## 7. Identity and OSINT
 
+These tools probe third-party services about a person/account and may notify the subject or violate
+site terms. Use them only for a lawful, approved objective; document the legal basis and minimize
+collected data.
+
 ```bash
 pipx install sherlock-project
 sherlock username --timeout 10 --print-found
@@ -135,7 +144,7 @@ holehe email@example.com
 pipx install phoneinfoga
 phoneinfoga scan -n "+84912345678"
 
-# Image metadata
+# Image metadata (local; preserve the original file)
 exiftool image.jpg
 identify -verbose image.jpg
 ffmpeg -i video.mp4 -vf fps=1 frame_%04d.png
@@ -201,6 +210,7 @@ def canonical(url):
 ```
 
 ### Result record schema
+Track results in the answer; save a file only with approval. Use evidence labels, not a score.
 ```json
 {
   "query": "site:example.com filetype:pdf",
@@ -209,8 +219,8 @@ def canonical(url):
   "url": "https://example.com/report.pdf",
   "title": "Annual Report",
   "snippet": "...",
-  "status": "confirmed",
-  "confidence": "B",
+  "evidence": "source-reported",
+  "limits": "not opened in full",
   "pivots": ["whois", "certificate", "author"]
 }
 ```
@@ -219,13 +229,15 @@ def canonical(url):
 - Batch 3-4 engines/queries, sequential within a batch, 1-2s delay.
 - Respect per-API quotas; cache responses keyed by canonical query.
 - Stop retrying on 401/403; rotate only where ToS permits.
-- Persist raw responses for reproducibility (JSONL) and log failures.
+- Persist raw responses only with approval of location and content.
 
 ## 10. Safety checklist
 
-- Written authorization and scope before active testing.
-- No credential use, no data exfiltration, no destructive actions.
+- Research first; practical steps need written authorization plus Section 0.6 approval.
+- Scope every action: target/account, operation, environment, exclusions, rate, time, stop condition.
+- No credential use without a separately approved, narrowly scoped check; no data exfiltration.
+- Sanitize sensitive-derived queries and show them before sending.
 - Redact secrets and PII in outputs.
 - Verify tools/skills before install; prefer signed releases and pinned versions.
 - Run untrusted tools in a container/VM without credentials.
-- Keep an audit log of queries and actions for the engagement report.
+- Track queries and actions in the answer for the engagement report; no silent persistence.

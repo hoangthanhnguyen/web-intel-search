@@ -8,7 +8,8 @@ PSIRT, release notes, changelog, CVE bulletin, fixed version, workaround, securi
 "is it patched", "affected versions", CNCERT, 腾讯安全, 阿里云安全, 绿盟, 深信服, 启明星辰.
 
 **Process contract:** Always run the Universal Search Loop (Section 1) and the Process Compliance
-Gate (Section 0.5). This module supplies sources and queries only.
+Gate (Section 0.5) and the action-approval rules (Section 0.6). This module supplies
+sources and queries only; it does not authorize practical actions.
 
 ---
 
@@ -42,8 +43,9 @@ Gate (Section 0.5). This module supplies sources and queries only.
   (`security.alibaba.com`) - Chinese cloud/vendor advisories and SRC notices.
 - **NSFOCUS** (`nsfocus.com.cn`), **Sangfor** (`sangfor.com.cn`), **Venustech**
   (`venustech.com.cn`) - Chinese vendor advisories and threat research.
-- Chinese advisories may use local vulnerability IDs (CNVD/CNNVD) rather than CVE; map them to the
-  CVE and vendor record before relying on affected/fixed versions.
+- Chinese advisories may use local vulnerability IDs (CNVD/CNNVD) rather than CVE. Map to a CVE
+  only when a mapping exists and can be verified from the advisory or vendor; otherwise use the
+  local/vendor ID as the primary identifier and mark the CVE mapping unavailable.
 
 ### Distribution and package sources
 - Debian Security Tracker (`security-tracker.debian.org`).
@@ -106,7 +108,8 @@ site:access.redhat.com "CVE-2024-3400"
 6. **Check workarounds.** Config changes, feature disabling, WAF rules, network restrictions.
 7. **Map detection.** What telemetry would show exploitation or vulnerable configuration?
 8. **Recommend action.** Patch, mitigate, monitor, or accept with rationale.
-9. **Verify.** Confirm the fixed version in a lab; check that the patch actually blocks the PoC.
+9. **Propose verification.** Confirm the fixed version and blocking behavior in a lab as a separate
+   approved handoff; otherwise report the vendor's claim as source-reported.
 
 ---
 
@@ -122,7 +125,7 @@ site:access.redhat.com "CVE-2024-3400"
 | Patch | commit hash / diff summary |
 | Workaround | disable feature X |
 | Detection | log pattern, request signature |
-| Confidence | A (vendor + patch + lab) |
+| Evidence | source-reported (vendor + patch); reproduced only if an approved lab run was observed |
 
 ---
 
@@ -143,19 +146,24 @@ site:access.redhat.com "CVE-2024-3400"
 - Use patches and diffs to defend, detect, and verify - not to weaponize.
 - Do not publish exploit details before the coordinated disclosure date.
 - Respect vendor terms and embargoes.
-- Verify fixes in a lab; do not test on production without change control.
+- Propose lab verification of fixes; do not test on production without change control and approval.
 
 ---
 
 ## Output contract
 
+Extends the shared contract in `SKILL.md` Section 13. Research output only; practical actions are a separate approved handoff (Section 0.6).
+
 ```
-module:        M11 Vendor Advisories
-objective:     determine patch/mitigation status for <product/CVE>
-authorization: public advisory / owned systems
-sources_used:  vendor PSIRT, distro tracker, patch commit, release notes, mapped to the claim it supports
-sources_read:  URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
-findings:      affected/fixed versions, patch, workaround, detection
-pivots:        M3 PoC, M8 reproduction, M6 secure code
-caveats:       backports, EOL, incomplete advisory, confidence
+module:                 M11 Vendor Advisories
+objective:              determine patch/mitigation status for <product/CVE>
+authorization:          authorized / lab / public-only / unknown
+authorization_evidence: actual scope/policy source (module default: public advisory / owned systems), or not established
+approval:               current-task A/B/C approval used (scope + limits), or none
+queries:                exact sanitized queries/dorks + engine + date (never invented)
+sources_used:           vendor PSIRT, distro tracker, patch commit, release notes, mapped to the claim it supports
+sources_read:           URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
+findings:               affected/fixed versions, patch, workaround, detection; label each claim source-reported / corroborated / code-inspected / reproduced with limits
+pivots:                 M3 PoC, M8 reproduction, M6 secure code
+caveats:                backports, EOL, incomplete advisory, evidence limits
 ```

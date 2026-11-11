@@ -10,7 +10,8 @@ exfiltration, purple team, threat actor, TTP, emulation plan, TIBER-EU, CBEST, A
 LLM red team, DFIR, detection engineering.
 
 **Process contract:** Always run the Universal Search Loop (Section 1) and the Process Compliance
-Gate (Section 0.5). This module supplies sources and queries only.
+Gate (Section 0.5) and the action-approval rules (Section 0.6). This module supplies
+sources and queries only; it does not authorize practical actions.
 
 ---
 
@@ -124,9 +125,12 @@ site:genai.owasp.org "Agentic" "red team"
 4. **Check legal and licensing.** RoE, authorization, tool licenses, data handling.
 5. **Design infrastructure and OPSEC.** Separate identities, redirectors, logging, and scope.
 6. **Define detection/telemetry first.** What should the blue team see? Which logs?
-7. **Execute only in the authorized environment.** Log every action; have a rollback plan.
+7. **Plan execution and cleanup.** Specify the approved environment, actions, telemetry, rollback,
+   and artifact removal. Execution, access revocation, and cleanup are practical steps requiring
+   A/B/C approval; without it, deliver the plan and gaps.
 8. **Document TTPs, detections, and gaps.** Feed results into detection engineering.
-9. **Debrief and purge.** Remove artifacts, revoke access, deliver the report (M12).
+9. **Propose debrief and cleanup** (remove artifacts, revoke access) as an approved action, then
+   deliver the report (M12).
 
 ---
 
@@ -141,7 +145,7 @@ site:genai.owasp.org "Agentic" "red team"
 | Detection | Sigma rule + SIEM query |
 | OPSEC | avoid command-line logging, use signed binaries? |
 | Cleanup | remove task, delete payload |
-| Confidence | B (ATT&CK + vendor research) |
+| Evidence | corroborated (ATT&CK + vendor research); not run |
 
 ---
 
@@ -162,7 +166,9 @@ site:genai.owasp.org "Agentic" "red team"
 
 - Written authorization, defined scope, and rules of engagement are mandatory.
 - Prefer non-destructive procedures; simulate impact rather than cause it.
-- Protect collected credentials and data; minimize and delete.
+- Execution, configuration changes, access revocation, and artifact deletion need their own
+  approval; existing RoE does not authorize the agent to act now.
+- Protect collected credentials and data; minimize and delete under the approved retention rule.
 - Coordinate with the blue team and respect safety controls.
 - Do not publish operational details that enable real-world harm.
 
@@ -170,13 +176,18 @@ site:genai.owasp.org "Agentic" "red team"
 
 ## Output contract
 
+Extends the shared contract in `SKILL.md` Section 13. Research output only; practical actions are a separate approved handoff (Section 0.6).
+
 ```
-module:        M5 Red Team
-objective:     emulation/detection plan for <threat actor/technique>
-authorization: written RoE / lab only
-sources_used:  ATT&CK, Atomic Red Team, vendor research, Sigma, mapped to the claim it supports
-sources_read:  URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
-findings:      technique map, procedures, telemetry, detections, gaps
-pivots:        M10 research, M9 labs, M12 report
-caveats:       licensing, destructive steps excluded, scope limits
+module:                 M5 Red Team
+objective:              emulation/detection plan for <threat actor/technique>
+authorization:          authorized / lab / public-only / unknown
+authorization_evidence: actual scope/policy source (module default: written RoE / lab only), or not established
+approval:               current-task A/B/C approval used (scope + limits), or none
+queries:                exact sanitized queries/dorks + engine + date (never invented)
+sources_used:           ATT&CK, Atomic Red Team, vendor research, Sigma, mapped to the claim it supports
+sources_read:           URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
+findings:               technique map, procedures, telemetry, detections, gaps; label each claim source-reported / corroborated / code-inspected / reproduced with limits
+pivots:                 M10 research, M9 labs, M12 report
+caveats:                licensing, destructive steps excluded, scope limits
 ```

@@ -1,7 +1,10 @@
 # Dork Library
 
-Use only against assets you own or are authorized to test. Verify every hit manually; search
-indexes are often stale and may attribute third-party assets to your target.
+These are search-index queries (passive discovery). Do not connect to, log in to, or exploit any
+host you find without written authorization and the separate action approval in `SKILL.md` 0.6.
+Verify every hit manually; search indexes are often stale and may attribute third-party assets to
+your target. Findings are leads with an evidence label, not proof. Use placeholders (`example.com`,
+`example`) and never dork with a real secret you found.
 
 ## 1. Open directories
 ```

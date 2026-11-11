@@ -8,7 +8,8 @@ security, reference architecture, NIST, CIS, ISO 27001, segmentation, defense in
 review, security controls, shared responsibility, landing zone, network architecture.
 
 **Process contract:** Always run the Universal Search Loop (Section 1) and the Process Compliance
-Gate (Section 0.5). This module supplies sources and queries only.
+Gate (Section 0.5) and the action-approval rules (Section 0.6). This module supplies
+sources and queries only; it does not authorize practical actions.
 
 ---
 
@@ -117,7 +118,7 @@ site:nist.gov "800-53" "access control"
 | Anti-pattern | long-lived access keys in CI |
 | Evidence | IAM Access Analyzer, Config rules |
 | Risk | High |
-| Confidence | B (framework + vendor docs) |
+| Evidence | corroborated (framework + vendor docs); design assumptions stated |
 
 ---
 
@@ -144,13 +145,18 @@ site:nist.gov "800-53" "access control"
 
 ## Output contract
 
+Extends the shared contract in `SKILL.md` Section 13. Research output only; practical actions are a separate approved handoff (Section 0.6).
+
 ```
-module:        M7 Security Architecture
-objective:     design/review <system> against <framework>
-authorization: owner/architect authorization
-sources_used:  NIST/CIS/ISO + cloud provider docs + reference architectures, mapped to the claim it supports
-sources_read:  URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
-findings:      control mapping, gaps, patterns, anti-patterns, roadmap
-pivots:        M6 threat model, M12 report, M11 vendor guidance
-caveats:       business constraints, compliance scope, unverified assumptions
+module:                 M7 Security Architecture
+objective:              design/review <system> against <framework>
+authorization:          authorized / lab / public-only / unknown
+authorization_evidence: actual scope/policy source (module default: owner/architect authorization), or not established
+approval:               current-task A/B/C approval used (scope + limits), or none
+queries:                exact sanitized queries/dorks + engine + date (never invented)
+sources_used:           NIST/CIS/ISO + cloud provider docs + reference architectures, mapped to the claim it supports
+sources_read:           URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
+findings:               control mapping, gaps, patterns, anti-patterns, roadmap; label each claim source-reported / corroborated / code-inspected / reproduced with limits
+pivots:                 M6 threat model, M12 report, M11 vendor guidance
+caveats:                business constraints, compliance scope, unverified assumptions
 ```

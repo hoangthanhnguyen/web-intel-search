@@ -1,5 +1,45 @@
 # Changelog
 
+## 1.9.2 - 2026-11-12
+
+- Added a Tor/I2P access procedure: install and verify Tor Browser, confirm the exit, use Bridges
+  when blocked, Safest security level, identity separation, CLI via `torsocks`/`--socks5-hostname`,
+  onion discovery through filtered indexes, and evidence capture rules.
+- Replaced the blanket illegal-data prohibition with an observation-vs-ownership rule: recording
+  that a leak or marketplace exists is allowed; acquiring, storing, buying, or redistributing the
+  data is not, because it is not usable evidence and creates legal exposure.
+- Added lawful substitutes for breach dumps, infostealer logs, marketplace listings, malware
+  samples, stolen PII, and stolen credentials.
+- Added explicit stop conditions for CSAM, stolen personal data, malware-for-sale, and
+  drugs/weapons marketplaces.
+- Tor/I2P access is now listed as a practical step requiring Section 0.6 approval, including local
+  law, employer policy, and jurisdiction risk.
+- Bumped version to 1.9.2.
+
+## 1.9.1 - 2026-11-11
+
+- Added Section 0.6 action approval: research first, then A (once) / B (bounded similar actions in
+  the current task) / C (decline); grants are limited by target, operation, environment, data
+  destination, privilege, rate/cost, impact, and expiry.
+- Added mandatory sanitization and pre-send approval for queries derived from sensitive/internal
+  data; removed automatic evidence archiving and file persistence.
+- Changed credential handling to detect without validation by default; TruffleHog examples now use
+  `--no-verification` with explicit `--results`; removed `/v1/balance` as a recommended Stripe
+  "identity" check and documented that it returns account data.
+- Replaced A-D confidence grades with evidence labels (source-reported, corroborated,
+  code-inspected, reproduced) across the core contract and all 12 modules.
+- Made depth explicit: quick for narrow lookups, deep for disputed/consequential questions, without
+  fixed source/engine quotas or padding small questions into full reports.
+- Unified all 12 module output contracts with the shared contract (`depth`, `queries`,
+  `authorization_evidence`, `approval`, evidence labels).
+- Converted imperative module workflows (execute, configure tools, instrument, delete/revoke,
+  retest) into research output plus an optional approved handoff.
+- Corrected GitHub code-search qualifiers (current `path:`/`content:`/`is:` syntax) and grouped the
+  `org:` OR example; fixed the M8 GitHub issue query.
+- Corrected M1 VDP wording, M11 CVE mapping when no CVE exists, and the README opencode install
+  path.
+- Bumped version to 1.9.1.
+
 ## 1.9.0 - 2026-10-20
 
 - Added individual researcher blogs to M10: Orange Tsai, Sam Curry, James Kettle, EdOverflow,

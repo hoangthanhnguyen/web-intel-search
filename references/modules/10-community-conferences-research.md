@@ -10,7 +10,8 @@ podcast, security news, researcher, "who is working on", "latest research", "fol
 Chinese-language, 中文, 先知, 安全客, FreeBuf, 看雪, 安全内参.
 
 **Process contract:** Always run the Universal Search Loop (Section 1) and the Process Compliance
-Gate (Section 0.5). This module supplies sources and queries only.
+Gate (Section 0.5) and the action-approval rules (Section 0.6). This module supplies
+sources and queries only; it does not authorize practical actions.
 
 ---
 
@@ -177,8 +178,9 @@ site:leavesongs.com "反序列化"
    independent source.
 5. **Extract structured notes.** Author, date, venue, claim, technique, IOCs, detection, links.
 6. **Track researchers and labs**, not just articles.
-7. **Review weekly.** Deduplicate, archive, and update the source list.
-8. **Convert into action.** Add detections, test in labs, update threat models.
+7. **Review periodically.** Deduplicate, note updates, and revise the source list. Saving a
+   monitoring file or subscribing to feeds is a practical step needing approval.
+8. **Propose follow-ups.** Detections, lab tests, and threat-model updates are separate actions.
 
 ---
 
@@ -192,7 +194,7 @@ site:leavesongs.com "反序列化"
 | Claim | new desync primitive |
 | Evidence | paper + talk + lab |
 | IOCs/detections | request patterns, rules |
-| Confidence | B (research + independent corroboration) |
+| Evidence | corroborated (research + independent corroboration), or source-reported |
 | Follow-ups | read paper, test in lab, update WAF |
 
 ---
@@ -221,13 +223,18 @@ site:leavesongs.com "反序列化"
 
 ## Output contract
 
+Extends the shared contract in `SKILL.md` Section 13. Research output only; practical actions are a separate approved handoff (Section 0.6).
+
 ```
-module:        M10 Community
-objective:     track <topic> across credible sources
-authorization: public sources
-sources_used:  N sources with URL + date + author, mapped to the claim it supports
-sources_read:  URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
-findings:      claims, techniques, IOCs, detections, confidence
-pivots:        M2 writeups, M3 CVE, M5 red team, M12 report
-caveats:       hype, unverified claims, embargoes
+module:                 M10 Community
+objective:              track <topic> across credible sources
+authorization:          authorized / lab / public-only / unknown
+authorization_evidence: actual scope/policy source (module default: public sources), or not established
+approval:               current-task A/B/C approval used (scope + limits), or none
+queries:                exact sanitized queries/dorks + engine + date (never invented)
+sources_used:           N sources with URL + date + author, mapped to the claim it supports
+sources_read:           URLs opened but excluded, with reason (off-scope, stale, duplicate, low confidence, inaccessible, discovery only)
+findings:               claims, techniques, IOCs, detections, evidence limits; label each claim source-reported / corroborated / code-inspected / reproduced with limits
+pivots:                 M2 writeups, M3 CVE, M5 red team, M12 report
+caveats:                hype, unverified claims, embargoes
 ```
