@@ -18,7 +18,7 @@ defensive research, bug bounty, appsec, architecture, learning, and journalism.
 - Separates research from action: credential validation, active testing, reproduction, installs,
   and changes need the explicit A/B/C approval in `SKILL.md` Section 0.6 (once, or bounded
   similar actions for the current task).
-- Ships 12 domain packs and 6 core reference files.
+- Ships 12 domain packs and 7 core reference files.
 
 ## Research vs action
 
@@ -52,6 +52,8 @@ destination, privilege, rate/cost, impact, and expiry; any change requires a new
 - `references/tooling.md` - CLI, APIs, automation, and safety checklist.
 - `references/quick-recipes.md` - copy-paste query recipes and safety notes.
 - `references/osint-targets.md` - target-specific OSINT source packs and meta-hubs.
+- `references/recon.md` - subject packs, scope manifest, identifier graph, asset inventory,
+  disambiguation, and report shape for any recon question.
 
 ## Install
 
@@ -92,9 +94,9 @@ clawhub skill publish ./web-intel-search --dry-run
 clawhub skill publish ./web-intel-search \
   --slug web-intel-search \
   --name "Web Intel Search" \
-  --version 1.9.2 \
+  --version 1.9.3 \
   --tags "security,osint,search,bug-bounty,red-team,appsec,architecture" \
-  --changelog "v1.9.2: Tor/I2P access procedure, observation-vs-ownership rule, and lawful substitutes for illegal sources"
+  --changelog "v1.9.3: recon playbook for any subject plus threat-intelligence workflow in M10"
 ```
 
 Before publishing, review the skill and its files. ClawHub runs automated security scans; keep

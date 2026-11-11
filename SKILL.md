@@ -1,11 +1,11 @@
 ---
 name: web-intel-search
 description: "Security search & research: OSINT, pentest, bug bounty, CVE/PoC, writeups, cheatsheets, red team, appsec, cloud architecture, debug, labs, blogs."
-version: 1.9.2
+version: 1.9.3
 license: MIT-0
 compatibility: Requires internet/web access. Optional CLI tools and API keys unlock advanced modules.
 metadata:
-  version: 1.9.2
+  version: 1.9.3
   language: en
   modules: 12
   sources:
@@ -149,6 +149,7 @@ query recipes, and output fields - never the process.
 | methodology, PTES, OWASP WSTG, OSSTMM, NIST 800-115, scoping, rules of engagement, report, remediation | M12 Methodology & Reporting | `12-methodology-reporting.md` |
 | threat intel, malware, IOC, phishing, leak, breach, dark web (legal sources) | Section 6 + M3/M10 | existing sections |
 | person, domain, IP, email, username, image | Section 5 + relevant module | existing sections |
+| recon, footprint, attack surface, asset inventory | Recon playbook | `references/recon.md` |
 
 ### Routing rules
 - **Research, then handoff.** Modules collect sources and propose procedures; they do not grant
@@ -381,8 +382,9 @@ Look for provider-specific prefixes and high-entropy strings. A regex catalog is
 ## 5. OSINT by Target Type
 
 Target-specific source packs live in `references/osint-targets.md` (domain/IP, email, person, phone,
-image, company, deep/dark web, records, crypto, physical). Apply the same evidence, privacy, and
-authorization rules.
+image, company, deep/dark web, records, crypto, physical). For multi-step recon on any subject
+(domain, IP, org, person, email, phone, image, repo, cloud asset, actor), use `references/recon.md`;
+pick the pack by question. Apply the same evidence, privacy, and authorization rules.
 
 ---
 
@@ -641,6 +643,7 @@ All reference paths are relative to this skill directory; in OpenClaw resolve th
 - `references/tooling.md` - CLI commands, install hints, and automation snippets.
 - `references/quick-recipes.md` - copy-paste query recipes and safety notes.
 - `references/osint-targets.md` - target-specific OSINT source packs and meta-hubs.
+- `references/recon.md` - subject packs, scope manifest, identifier graph, inventory, disambiguation.
 - `references/modules/` - the 12 domain modules listed in Section 13.
 
 Source skills/repos synthesized: Claude-OSINT (elementalsouls), UseOSINT/Skills,

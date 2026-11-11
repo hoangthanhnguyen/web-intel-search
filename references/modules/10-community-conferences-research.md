@@ -184,6 +184,34 @@ site:leavesongs.com "反序列化"
 
 ---
 
+## Threat-intelligence workflow
+
+News reports an event; intelligence answers a decision. Use this when the request is "what is
+happening", "who is this actor", "is this IOC real", or "what changed" - not for a single fact.
+
+1. **Frame the decision.** Consumer, action it drives, time horizon, and what would change the
+   answer. "Interesting" is not an intelligence requirement.
+2. **Collection plan.** Questions, actors/sectors, regions, source classes (vendor research, CERT,
+   regulators, DFIR reports, feeds), cutoff date. Prefer primary telemetry over aggregators that
+   re-report it.
+3. **Source reliability.** Record publisher, author, date, and whether it is primary or copied.
+   Rate source and information separately (Admiralty-style A-F / 1-6). Two articles quoting the
+   same press release are one source.
+4. **Normalize indicators.** Type (domain, IP, URL, hash, email), value, first/last seen, context,
+   related campaign, TTL, confidence. Defang for transport; lowercase domains; keep the original.
+5. **Correlate.** Diamond model (adversary, capability, infrastructure, victim), ATT&CK mapping,
+   and competing hypotheses. State what evidence would falsify the attribution.
+6. **Lifecycle.** Indicators expire. Mark stale values, deduplicate by canonical value and source,
+   and do not push unverified indicators into blocking controls without approval.
+7. **Standards and tooling.** STIX 2.1/TAXII, MISP, OpenCTI for exchange and correlation. Keep raw
+   URLs, publication dates, and hashes of collected reports.
+8. **Report.** BLUF, key judgments each labeled `source-reported` or `corroborated`, confidence and
+   gaps, defanged indicator table, detection ideas, and a recommended action.
+9. **Feedback.** Record whether detections fired, false positives, and update the source list and
+   indicator TTLs.
+
+---
+
 ## What to extract
 
 | Field | Example |

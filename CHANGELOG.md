@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.9.3 - 2026-11-12
+
+- Added `references/recon.md`: a subject-agnostic recon playbook covering domain/website,
+  IP/ASN, organization, person/username, email/phone, image/video, code/repository, cloud asset,
+  threat actor, and physical/event subjects.
+- Added a subject selector, scope manifest, universal recon loop, identifier graph with link
+  strength, disambiguation checklist, asset inventory schema, evidence rules, approved active-recon
+  boundary, and report shapes.
+- Added a threat-intelligence workflow to M10: decision framing, collection plan, source
+  reliability, indicator normalization and TTL, Diamond Model/ATT&CK correlation, competing
+  hypotheses, STIX/TAXII/MISP/OpenCTI exchange, and BLUF reporting.
+- Declared recon and TI routing in `SKILL.md` (router table, Section 5 pointer, references list).
+- Bumped version to 1.9.3.
+
 ## 1.9.2 - 2026-11-12
 
 - Added a Tor/I2P access procedure: install and verify Tor Browser, confirm the exit, use Bridges
